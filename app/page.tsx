@@ -1,65 +1,134 @@
-import Image from "next/image";
+/**
+ * Landing Page / Portfolio
+ * Hero, About, Skills, Experience, and Featured Projects
+ */
 
-export default function Home() {
+import { prisma } from '@/lib/prisma';
+import { ProjectCard } from '@/components/ProjectCard';
+import Link from 'next/link';
+
+export default async function Home() {
+  // Fetch featured projects (latest 3)
+  const projects = await prisma.project.findMany({
+    take: 3,
+    orderBy: { createdAt: 'desc' },
+  });
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="min-h-screen flex items-center justify-center px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
+            Tirta "Kikuk" Afandi
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-2xl md:text-3xl text-white/90 mb-4">
+            Backend Engineer
+          </p>
+          <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto mb-8">
+            Building scalable and robust backend systems with clean, maintainable code.
+            Passionate about Clear Flow Programming and honest naming conventions.
+          </p>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <a href="#projects" className="px-6 py-3 bg-gradient-to-r from-purple-600/80 to-pink-600/80 hover:from-purple-700/90 hover:to-pink-700/90 text-white rounded-lg backdrop-blur-md border border-white/20 transition-all duration-300">
+              View Projects
+            </a>
+            <a href="#about" className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-md border border-white/20 transition-all duration-300">
+              About Me
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="py-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-8 text-center">
+            About Me
+          </h2>
+          <div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-8">
+            <p className="text-white/80 text-lg leading-relaxed mb-4">
+              I'm a backend engineer with a passion for building clean, scalable, and maintainable systems.
+              I believe in the Clear Flow Programming Style - keeping code simple, honest, and flat.
+            </p>
+            <p className="text-white/80 text-lg leading-relaxed">
+              My expertise lies in API development, database design, payment gateway integration,
+              and creating robust server-side applications that just work.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Skills Section */}
+      <section id="skills" className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-12 text-center">
+            Skills & Technologies
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {['TypeScript', 'Node.js', 'Next.js', 'Prisma ORM', 'PostgreSQL', 'REST APIs', 'Payment Gateways', 'NextAuth'].map((skill) => (
+              <div key={skill} className="bg-white/10 backdrop-blur-md rounded-lg border border-white/20 p-6 text-center hover:bg-white/15 transition-all duration-300">
+                <p className="text-white font-medium">{skill}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Experience Section */}
+      <section id="experience" className="py-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-12 text-center">
+            Experience
+          </h2>
+          <div className="space-y-6">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-8">
+              <h3 className="text-2xl font-bold text-white mb-2">Backend Engineer</h3>
+              <p className="text-purple-400 mb-4">Independent Developer</p>
+              <p className="text-white/70">
+                Specialized in building full-stack applications with focus on backend architecture,
+                API design, database optimization, and third-party integrations.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Projects Section */}
+      <section id="projects" className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-white">
+              Featured Projects
+            </h2>
+            <Link href="/projects" className="text-purple-400 hover:text-purple-300 transition-colors">
+              View All →
+            </Link>
+          </div>
+          
+          {projects.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {projects.map((project) => (
+                <ProjectCard key={project.id} {...project} />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-12 text-center">
+              <p className="text-white/60">No projects yet. Check back soon!</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 px-4 border-t border-white/10">
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="text-white/60">
+            © {new Date().getFullYear()} Tirta "Kikuk" Afandi. All rights reserved.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </footer>
     </div>
   );
 }
+
