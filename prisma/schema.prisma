@@ -1,0 +1,85 @@
+// Prisma schema for Kikuk Afandi Portfolio
+// Models: User, Project, Blog, Product, Transaction, CallbackLog
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      UserRole @default(ADMIN)
+  createdAt DateTime @default(now())
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model Project {
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  techStack    String[]
+  thumbnailUrl String
+  demoUrl      String?
+  repoUrl      String?
+  createdAt    DateTime @default(now())
+}
+
+model Blog {
+  id         String   @id @default(uuid())
+  title      String
+  slug       String   @unique
+  coverImage String?
+  content    String
+  tags       String[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Product {
+  id           String        @id @default(uuid())
+  title        String
+  description  String
+  price        Int           // in IDR cents or full IDR
+  fileUrl      String
+  thumbnailUrl String?
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  transactions Transaction[]
+}
+
+model Transaction {
+  id              String      @id @default(uuid())
+  buyerEmail      String
+  buyerName       String?
+  product         Product     @relation(fields: [productId], references: [id])
+  productId       String
+  price           Int
+  status          TransStatus @default(PENDING)
+  paymentMethod   String?
+  oyInvoiceId     String?
+  callbackPayload Json?
+  createdAt       DateTime    @default(now())
+}
+
+enum TransStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+model CallbackLog {
+  id        String   @id @default(uuid())
+  payload   Json
+  createdAt DateTime @default(now())
+}
