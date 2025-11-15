@@ -8,7 +8,6 @@ import Link from 'next/link';
 import { Card } from './ui/Card';
 
 interface BlogCardProps {
-  id: string;
   title: string;
   slug: string;
   coverImage?: string | null;
@@ -18,7 +17,6 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ 
-  id,
   title, 
   slug,
   coverImage,

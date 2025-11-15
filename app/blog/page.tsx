@@ -29,7 +29,7 @@ export default async function BlogPage() {
 
         {blogs.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {blogs.map((blog) => (
+            {blogs.map((blog: any) => (
               <BlogCard 
                 key={blog.id} 
                 {...blog} 

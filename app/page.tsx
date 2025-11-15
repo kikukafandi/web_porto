@@ -108,7 +108,7 @@ export default async function Home() {
           
           {projects.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project) => (
+              {projects.map((project: any) => (
                 <ProjectCard key={project.id} {...project} />
               ))}
             </div>

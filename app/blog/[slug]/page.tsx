@@ -52,7 +52,7 @@ export default async function BlogPostPage({
           </h1>
 
           <div className="flex flex-wrap gap-2 mb-8">
-            {blog.tags.map((tag) => (
+            {blog.tags.map((tag: string) => (
               <span 
                 key={tag}
                 className="px-3 py-1 bg-purple-500/20 backdrop-blur-sm rounded-full text-sm text-purple-300 border border-purple-400/20"
@@ -78,7 +78,7 @@ export async function generateStaticParams() {
     select: { slug: true },
   });
 
-  return blogs.map((blog) => ({
+  return blogs.map((blog: any) => ({
     slug: blog.slug,
   }));
 }

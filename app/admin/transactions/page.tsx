@@ -51,7 +51,7 @@ export default async function AdminTransactionsPage() {
 
       {transactions.length > 0 ? (
         <div className="space-y-4">
-          {transactions.map((transaction) => (
+          {transactions.map((transaction: any) => (
             <Card key={transaction.id} className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div>

@@ -17,9 +17,9 @@ export default async function AdminDashboard() {
     }),
   ]);
 
-  const pendingTransactions = transactionStats.find(s => s.status === 'PENDING')?._count || 0;
-  const paidTransactions = transactionStats.find(s => s.status === 'PAID')?._count || 0;
-  const failedTransactions = transactionStats.find(s => s.status === 'FAILED')?._count || 0;
+  const pendingTransactions = transactionStats.find((s: any) => s.status === 'PENDING')?._count || 0;
+  const paidTransactions = transactionStats.find((s: any) => s.status === 'PAID')?._count || 0;
+  const failedTransactions = transactionStats.find((s: any) => s.status === 'FAILED')?._count || 0;
 
   const stats = [
     { label: 'Projects', value: projectCount, color: 'purple' },

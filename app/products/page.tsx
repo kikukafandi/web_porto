@@ -30,7 +30,7 @@ export default async function ProductsPage() {
 
         {products.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product) => (
+            {products.map((product: any) => (
               <ProductCard key={product.id} {...product} />
             ))}
           </div>

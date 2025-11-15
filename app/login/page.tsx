@@ -37,7 +37,7 @@ export default function LoginPage() {
       } else {
         router.push('/admin');
       }
-    } catch (err) {
+    } catch (error) {
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);

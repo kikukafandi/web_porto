@@ -6,7 +6,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
@@ -25,7 +24,6 @@ export default function ProductDetailPage({
 }: { 
   params: { id: string } 
 }) {
-  const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [buyerEmail, setBuyerEmail] = useState('');
@@ -35,6 +33,7 @@ export default function ProductDetailPage({
 
   useEffect(() => {
     fetchProduct();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id]);
 
   const fetchProduct = async () => {
@@ -46,7 +45,7 @@ export default function ProductDetailPage({
       } else {
         setError('Product not found');
       }
-    } catch (err) {
+    } catch (error) {
       setError('Failed to load product');
     } finally {
       setLoading(false);
@@ -77,7 +76,7 @@ export default function ProductDetailPage({
       } else {
         setError(data.error || 'Failed to create checkout');
       }
-    } catch (err) {
+    } catch (error) {
       setError('An error occurred. Please try again.');
     } finally {
       setPurchasing(false);
