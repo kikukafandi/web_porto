@@ -1,15 +1,18 @@
 /**
- * NextAuth v5 Configuration
- * Credentials provider for admin-only authentication
+ * NextAuth v5 Configuration (Full - Node.js runtime)
+ * Menggabungkan config dasar dengan provider yang butuh Node.js (Prisma).
  */
 
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
+import { authConfig } from '@/auth.config';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig, // (2) Gunakan config dasar
   providers: [
+    // (3) Tambahkan provider yang butuh Node.js (Prisma)
     Credentials({
       credentials: {
         email: { label: 'Email', type: 'email' },
@@ -46,27 +49,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.role = user.role;
-        token.id = user.id;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-      }
-      return session;
-    },
-  },
-  pages: {
-    signIn: '/login',
-  },
-  session: {
-    strategy: 'jwt',
-  },
-  secret: process.env.NEXTAUTH_SECRET,
 });

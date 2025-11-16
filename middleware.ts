@@ -1,18 +1,21 @@
 /**
- * Middleware for route protection
- * Protects /admin/* routes - requires authentication
+ * Route protection middleware – Edge Safe
+ * Clear Flow Style
  */
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { auth } from '@/lib/auth';
+import { getToken } from 'next-auth/jwt';
 
 export async function middleware(request: NextRequest) {
-  const session = await auth();
+  const token = await getToken({ req: request });
 
-  // Protect /admin routes
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    if (!session || session.user?.role !== 'ADMIN') {
+  const isAdminRoute = request.nextUrl.pathname.startsWith('/admin');
+
+  if (isAdminRoute) {
+    const isAdmin = token?.role === 'ADMIN';
+
+    if (!isAdmin) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
   }
