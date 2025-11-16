@@ -7,6 +7,8 @@ import { prisma } from '@/lib/prisma';
 import { ProjectCard } from '@/components/ProjectCard';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProjectsPage() {
   const projects = await prisma.project.findMany({
     orderBy: { createdAt: 'desc' },

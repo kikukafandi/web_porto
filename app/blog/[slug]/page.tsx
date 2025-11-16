@@ -74,12 +74,6 @@ export default async function BlogPostPage({
   );
 }
 
-export async function generateStaticParams() {
-  const blogs = await prisma.blog.findMany({
-    select: { slug: true },
-  });
-
-  return blogs.map((blog: any) => ({
-    slug: blog.slug,
-  }));
-}
+// Remove generateStaticParams to avoid database connection during build
+// This will make the page render dynamically instead of statically
+export const dynamic = 'force-dynamic';

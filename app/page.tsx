@@ -2,6 +2,9 @@ import React from 'react';
 import { prisma } from '@/lib/prisma';
 import { AnimatedHome } from '@/components/AnimatedHome';
 
+// Force dynamic rendering to avoid database connection during build
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const projects = await prisma.project.findMany({
     take: 3,

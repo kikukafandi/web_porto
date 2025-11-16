@@ -6,6 +6,8 @@
 import { prisma } from '@/lib/prisma';
 import { Card } from '@/components/ui/Card';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminDashboard() {
   const [projectCount, blogCount, productCount, transactionStats] = await Promise.all([
     prisma.project.count(),
