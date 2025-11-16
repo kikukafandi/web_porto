@@ -11,10 +11,11 @@ import { Card } from '@/components/ui/Card';
 export default async function BlogPostPage({ 
   params 
 }: { 
-  params: { slug: string } 
+  params: Promise<{ slug: string }> 
 }) {
+  const { slug } = await params;
   const blog = await prisma.blog.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
   });
 
   if (!blog) {

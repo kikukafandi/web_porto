@@ -25,13 +25,21 @@ export default function AdminExperiencesPage() {
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<{
+        company: string;
+        position: string;
+        duration: string;
+        description: string;
+        technologies: string;
+        type: 'WORK' | 'EDUCATION' | 'PROJECT';
+        order: number;
+    }>({
         company: '',
         position: '',
         duration: '',
         description: '',
         technologies: '',
-        type: 'WORK' as const,
+        type: 'WORK',
         order: 0
     });
 

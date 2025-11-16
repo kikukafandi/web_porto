@@ -10,7 +10,7 @@ import { auth } from '@/lib/auth';
 // GET /api/transactions/[id]
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -22,8 +22,9 @@ export async function GET(
       );
     }
 
+    const { id } = await params;
     const transaction = await prisma.transaction.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         product: true,
       },

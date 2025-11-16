@@ -1,16 +1,16 @@
 /**
- * NextAuth v4 Configuration
+ * NextAuth v5 Configuration
  * Complete authentication setup with Credentials provider
  */
 
-import NextAuth, { NextAuthOptions } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
+import NextAuth from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
-export const authOptions: NextAuthOptions = {
+export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: "credentials",
       credentials: {
         email: { 
@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
           type: 'password' 
         },
       },
-      async authorize(credentials) {
+      async authorize(credentials: any) {
         try {
           if (!credentials?.email || !credentials?.password) {
             console.log('Missing credentials');
@@ -91,11 +91,4 @@ export const authOptions: NextAuthOptions = {
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-};
-
-const handler = NextAuth(authOptions);
-
-export { handler as GET, handler as POST };
-
-// Helper function for Server Components / API
-export const auth = () => getServerSession(authOptions);
+});

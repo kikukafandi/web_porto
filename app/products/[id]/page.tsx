@@ -22,7 +22,7 @@ interface Product {
 export default function ProductDetailPage({ 
   params 
 }: { 
-  params: { id: string } 
+  params: Promise<{ id: string }> 
 }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,15 +30,20 @@ export default function ProductDetailPage({
   const [buyerName, setBuyerName] = useState('');
   const [purchasing, setPurchasing] = useState(false);
   const [error, setError] = useState('');
+  const [productId, setProductId] = useState<string>('');
 
   useEffect(() => {
-    fetchProduct();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.id]);
+    const initParams = async () => {
+      const resolvedParams = await params;
+      setProductId(resolvedParams.id);
+      fetchProduct(resolvedParams.id);
+    };
+    initParams();
+  }, [params]);
 
-  const fetchProduct = async () => {
+  const fetchProduct = async (id: string) => {
     try {
-      const response = await fetch(`/api/products/${params.id}`);
+      const response = await fetch(`/api/products/${id}`);
       if (response.ok) {
         const data = await response.json();
         setProduct(data);
@@ -62,7 +67,7 @@ export default function ProductDetailPage({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          productId: params.id,
+          productId: productId,
           buyerEmail,
           buyerName: buyerName || null,
         }),

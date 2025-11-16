@@ -5,11 +5,12 @@ import { auth } from '@/lib/auth';
 // GET /api/experiences/[id] - Get single experience
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const experience = await prisma.experience.findUnique({
-      where: { id: params.id }
+      where: { id },
     });
 
     if (!experience) {
@@ -32,7 +33,7 @@ export async function GET(
 // PATCH /api/experiences/[id] - Update experience (Admin only)
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -40,11 +41,12 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     const body = await request.json();
     const { company, position, duration, description, technologies, type, order, isActive } = body;
 
     const experience = await prisma.experience.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...(company && { company }),
         ...(position && { position }),
@@ -70,7 +72,7 @@ export async function PATCH(
 // DELETE /api/experiences/[id] - Delete experience (Admin only)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -78,8 +80,9 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await params;
     await prisma.experience.delete({
-      where: { id: params.id }
+      where: { id }
     });
 
     return NextResponse.json({ success: true });

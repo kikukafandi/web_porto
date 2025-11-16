@@ -22,11 +22,12 @@ const projectUpdateSchema = z.object({
 // GET /api/projects/[id]
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const project = await prisma.project.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!project) {
@@ -49,7 +50,7 @@ export async function GET(
 // PATCH /api/projects/[id]
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -61,11 +62,12 @@ export async function PATCH(
       );
     }
 
+    const { id } = await params;
     const body = await request.json();
     const validatedData = projectUpdateSchema.parse(body);
 
     const project = await prisma.project.update({
-      where: { id: params.id },
+      where: { id },
       data: validatedData,
     });
 
@@ -89,7 +91,7 @@ export async function PATCH(
 // DELETE /api/projects/[id]
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -101,8 +103,9 @@ export async function DELETE(
       );
     }
 
+    const { id } = await params;
     await prisma.project.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ success: true });

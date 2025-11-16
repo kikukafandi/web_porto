@@ -21,11 +21,12 @@ const blogUpdateSchema = z.object({
 // GET /api/blogs/[id]
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const blog = await prisma.blog.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!blog) {
@@ -48,7 +49,7 @@ export async function GET(
 // PATCH /api/blogs/[id]
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -60,6 +61,7 @@ export async function PATCH(
       );
     }
 
+    const { id } = await params;
     const body = await request.json();
     const validatedData = blogUpdateSchema.parse(body);
 
@@ -68,7 +70,7 @@ export async function PATCH(
       const existing = await prisma.blog.findFirst({
         where: {
           slug: validatedData.slug,
-          NOT: { id: params.id },
+          NOT: { id },
         },
       });
 
@@ -81,7 +83,7 @@ export async function PATCH(
     }
 
     const blog = await prisma.blog.update({
-      where: { id: params.id },
+      where: { id },
       data: validatedData,
     });
 
@@ -105,7 +107,7 @@ export async function PATCH(
 // DELETE /api/blogs/[id]
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -117,8 +119,9 @@ export async function DELETE(
       );
     }
 
+    const { id } = await params;
     await prisma.blog.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({ success: true });
