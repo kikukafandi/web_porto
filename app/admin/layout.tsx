@@ -22,6 +22,7 @@ export default function AdminLayout({
     { href: '/admin/projects', label: 'Projects' },
     { href: '/admin/blogs', label: 'Blogs' },
     { href: '/admin/products', label: 'Products' },
+    { href: '/admin/experiences', label: 'Experiences' },
     { href: '/admin/transactions', label: 'Transactions' },
   ];
 

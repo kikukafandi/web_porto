@@ -1,7 +1,7 @@
 /**
  * Input Component with Glassmorphism Design
  */
-
+"use client";
 import React from 'react';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {

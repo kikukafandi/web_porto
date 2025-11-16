@@ -1,7 +1,7 @@
 /**
  * Textarea Component with Glassmorphism Design
  */
-
+"use client";
 import React from 'react';
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
