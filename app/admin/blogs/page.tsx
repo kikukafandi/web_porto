@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
+import { FileUpload } from '@/components/FileUpload';
 
 interface Blog {
   id: string;
@@ -35,6 +36,9 @@ export default function AdminBlogsPage() {
     tags: '',
   });
 
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   useEffect(() => {
     fetchBlogs();
   }, []);
@@ -48,6 +52,38 @@ export default function AdminBlogsPage() {
       console.error('Failed to fetch blogs:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const uploadImage = async (file: File): Promise<string | null> => {
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.url;
+      }
+      throw new Error('Upload failed');
+    } catch (error) {
+      console.error('Failed to upload image:', error);
+      return null;
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleFileSelect = async (file: File) => {
+    setSelectedFile(file);
+    const imageUrl = await uploadImage(file);
+    if (imageUrl) {
+      setFormData(prev => ({ ...prev, coverImage: imageUrl }));
     }
   };
 
@@ -117,6 +153,7 @@ export default function AdminBlogsPage() {
     });
     setEditingId(null);
     setShowForm(false);
+    setSelectedFile(null);
   };
 
   const generateSlug = (title: string) => {
@@ -164,11 +201,19 @@ export default function AdminBlogsPage() {
               onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
               required
             />
-            <Input
-              label="Cover Image URL (optional)"
-              value={formData.coverImage}
-              onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-            />
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">
+                Cover Image
+              </label>
+              <FileUpload
+                onFileSelect={handleFileSelect}
+                placeholder="Upload cover image"
+                currentImage={formData.coverImage}
+              />
+              {uploadingImage && (
+                <p className="text-sm text-purple-400 mt-2">Uploading image...</p>
+              )}
+            </div>
             <Textarea
               label="Content (Markdown supported)"
               value={formData.content}

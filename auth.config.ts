@@ -1,10 +1,10 @@
-import type { NextAuthConfig } from "next-auth";
+import type { NextAuthOptions } from "next-auth";
 
-export const authConfig = {
+export const authConfig: NextAuthOptions = {
   providers: [],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: any) {
       if (user) {
         token.role = user.role;
         token.id = user.id;
@@ -12,10 +12,10 @@ export const authConfig = {
       return token;
     },
 
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       if (session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
       }
       return session;
     },
@@ -30,4 +30,4 @@ export const authConfig = {
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-} satisfies NextAuthConfig;
+};
