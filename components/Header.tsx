@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 import { Cart } from './Cart';
 
 export function Header() {
+    const pathname = usePathname();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [cartCount, setCartCount] = useState(0);
@@ -46,6 +48,11 @@ export function Header() {
         { href: '/products', label: 'Products' },
         { href: '/login', label: 'Login' }
     ];
+
+    // Hide navbar on CV page
+    if (pathname === '/cv') {
+        return null;
+    }
 
     return (
         <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${

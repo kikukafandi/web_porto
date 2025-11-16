@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { BlogSection } from './BlogSection';
 import { Experience } from './Experience';
+import { ProfileSection } from './ProfileSection';
 import { containerVariants, itemVariants, badgeVariants } from '@/lib/animations';
 
 interface Project {
@@ -38,6 +39,20 @@ interface ExperienceItem {
     type: 'work' | 'education' | 'project';
 }
 
+interface Profile {
+    id: string;
+    name: string;
+    title: string;
+    bio: string;
+    email: string;
+    phone?: string;
+    location?: string;
+    avatarUrl?: string;
+    cvUrl?: string;
+    skills: string[];
+    isActive: boolean;
+}
+
 interface AnimatedHomeProps {
     projects: Project[];
     blogs?: BlogPost[];
@@ -47,6 +62,8 @@ interface AnimatedHomeProps {
 export function AnimatedHome({ projects, blogs = [], experiences = [] }: AnimatedHomeProps) {
     const [mounted, setMounted] = useState(false);
     const [randomValues, setRandomValues] = useState<{ x: number; y: number; delay: number; duration: number }[]>([]);
+    const [profile, setProfile] = useState<Profile | null>(null);
+    const [profileLoading, setProfileLoading] = useState(true);
 
     useEffect(() => {
         // Generate random values on client side to avoid hydration mismatch
@@ -58,9 +75,24 @@ export function AnimatedHome({ projects, blogs = [], experiences = [] }: Animate
         }));
         setRandomValues(values);
         setMounted(true);
+
+        // Fetch profile data
+        const fetchProfile = async () => {
+            try {
+                const response = await fetch('/api/profile');
+                if (response.ok) {
+                    const profileData = await response.json();
+                    setProfile(profileData);
+                }
+            } catch (error) {
+                console.error('Failed to fetch profile:', error);
+            } finally {
+                setProfileLoading(false);
+            }
+        };
+
+        fetchProfile();
     }, []);
-
-
 
     return (
         <motion.main
@@ -109,14 +141,14 @@ export function AnimatedHome({ projects, blogs = [], experiences = [] }: Animate
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
                     >
-                        Tirta "Kikuk" Afandi
+                        {profile?.name || 'Tirta "Kikuk" Afandi'}
                     </motion.h1>
 
                     <motion.p
                         className="mt-3 text-gray-300 max-w-xl leading-relaxed"
                         variants={itemVariants}
                     >
-                        Backend Engineer — building reliable, clean, and scalable backend systems with Node.js, NestJS, and pragmatic architecture. Clear Flow Programming Style.
+                        {profile?.bio || 'Backend Engineer — building reliable, clean, and scalable backend systems with Node.js, NestJS, and pragmatic architecture. Clear Flow Programming Style.'}
                     </motion.p>
 
                     {/* quick badges */}
@@ -124,7 +156,7 @@ export function AnimatedHome({ projects, blogs = [], experiences = [] }: Animate
                         className="mt-6 flex flex-wrap gap-3"
                         variants={containerVariants}
                     >
-                        {['Node.js', 'NestJS', 'JavaScript', 'SQL / Prisma'].map((tech, index) => (
+                        {(profile?.skills?.slice(0, 4) || ['Node.js', 'NestJS', 'JavaScript', 'SQL / Prisma']).map((tech, index) => (
                             <motion.span
                                 key={tech}
                                 className="glass rounded-full px-3 py-1 text-xs hover:bg-purple-500/20 transition-colors cursor-default"
@@ -152,8 +184,8 @@ export function AnimatedHome({ projects, blogs = [], experiences = [] }: Animate
                             See Projects
                         </motion.a>
                         <motion.a
-                            className="glass rounded-xl px-4 py-2 font-medium bg-gradient-to-r from-purple-600/80 to-purple-700/80 hover:from-purple-600 hover:to-purple-700 transition-all duration-300"
-                            href="mailto:admin@example.com"
+                            className="glass rounded-xl px-4 py-2 font-medium bg-linear-to-r from-purple-600/80 to-purple-700/80 hover:from-purple-600 hover:to-purple-700 transition-all duration-300"
+                            href={`mailto:${profile?.email || 'admin@example.com'}`}
                             whileHover={{ scale: 1.05, y: -2 }}
                             whileTap={{ scale: 0.95 }}
                             variants={itemVariants}
@@ -179,33 +211,41 @@ export function AnimatedHome({ projects, blogs = [], experiences = [] }: Animate
                             whileHover={{ scale: 1.1 }}
                             transition={{ duration: 0.3 }}
                         >
-                            <motion.span
-                                className="text-4xl font-bold text-purple-300"
-                                animate={{
-                                    textShadow: [
-                                        "0 0 0 rgba(168, 85, 247, 0)",
-                                        "0 0 20px rgba(168, 85, 247, 0.5)",
-                                        "0 0 0 rgba(168, 85, 247, 0)"
-                                    ]
-                                }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                            >
-                                KA
-                            </motion.span>
+                            {profile?.avatarUrl ? (
+                                <img
+                                    src={profile.avatarUrl}
+                                    alt={profile.name || 'Profile'}
+                                    className="w-full h-full object-cover rounded-2xl"
+                                />
+                            ) : (
+                                <motion.span
+                                    className="text-4xl font-bold text-purple-300"
+                                    animate={{
+                                        textShadow: [
+                                            "0 0 0 rgba(168, 85, 247, 0)",
+                                            "0 0 20px rgba(168, 85, 247, 0.5)",
+                                            "0 0 0 rgba(168, 85, 247, 0)"
+                                        ]
+                                    }}
+                                    transition={{ duration: 2, repeat: Infinity }}
+                                >
+                                    {profile?.name ? profile.name.split(' ').map(n => n[0]).join('') : 'KA'}
+                                </motion.span>
+                            )}
                         </motion.div>
 
                         <motion.h3
                             className="text-lg font-semibold text-center mb-2"
                             variants={itemVariants}
                         >
-                            Backend Engineer
+                            {profile?.title || 'Backend Engineer'}
                         </motion.h3>
 
                         <motion.p
                             className="text-sm text-gray-400 text-center mb-4"
                             variants={itemVariants}
                         >
-                            Specialized in scalable systems and clean architecture
+                            {profile?.location || 'Specialized in scalable systems and clean architecture'}
                         </motion.p>
 
                         <motion.div
@@ -217,6 +257,8 @@ export function AnimatedHome({ projects, blogs = [], experiences = [] }: Animate
                     </motion.div>
                 </motion.div>
             </motion.section>
+
+
 
             {/* PROJECTS SECTION */}
             <motion.section id="projects" variants={itemVariants}>
@@ -364,6 +406,10 @@ export function AnimatedHome({ projects, blogs = [], experiences = [] }: Animate
                     </Link>
                 </motion.div>
             </motion.section>
+
+
+            {/* Dynamic Profile Section */}
+            <ProfileSection />
 
             {/* Blog Section */}
             <motion.section variants={itemVariants}>

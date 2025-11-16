@@ -12,6 +12,8 @@ export default async function ProjectsPage() {
     orderBy: { createdAt: 'desc' },
   });
 
+  console.log('Projects:', projects);
+
   return (
     <div className="min-h-screen py-20 px-4">
       <div className="max-w-6xl mx-auto">

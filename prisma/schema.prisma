@@ -127,3 +127,31 @@ enum ExperienceType {
   EDUCATION
   PROJECT
 }
+
+model Profile {
+  id          String   @id @default(uuid())
+  name        String
+  title       String
+  bio         String
+  email       String
+  phone       String?
+  location    String?
+  avatarUrl   String?
+  cvUrl       String?
+  skills      String[]
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SocialMedia {
+  id        String   @id @default(uuid())
+  platform  String   // GitHub, LinkedIn, Twitter, Instagram, etc.
+  username  String
+  url       String
+  icon      String?  // Icon class or URL
+  isActive  Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
