@@ -3,7 +3,8 @@
  * Complete authentication setup with Credentials provider
  */
 
-import NextAuth, { NextAuthOptions, getServerSession } from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
@@ -31,7 +32,7 @@ export const authOptions: NextAuthOptions = {
           }
 
           const user = await prisma.user.findUnique({
-            where: { email: credentials.email as string },
+            where: { email: credentials.email },
           });
 
           if (!user) {
@@ -40,7 +41,7 @@ export const authOptions: NextAuthOptions = {
           }
 
           const isPasswordValid = await bcrypt.compare(
-            credentials.password as string,
+            credentials.password,
             user.password
           );
 
@@ -63,6 +64,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -71,6 +73,7 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
+
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
@@ -79,12 +82,15 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+
   pages: {
     signIn: "/login",
   },
+
   session: {
     strategy: "jwt",
   },
+
   secret: process.env.NEXTAUTH_SECRET,
 };
 
@@ -92,5 +98,5 @@ const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
 
-// Helper function for getting session in API routes
+// Helper function for Server Components / API
 export const auth = () => getServerSession(authOptions);
