@@ -1,23 +1,16 @@
 /**
- * NextAuth v5 Configuration (Full - Node.js runtime)
- * Menggabungkan config dasar dengan provider yang butuh Node.js (Prisma).
+ * NextAuth v4 Configuration
+ * Complete authentication setup with Credentials provider
  */
 
-import NextAuth from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
+import NextAuth, { NextAuthOptions, getServerSession } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
-import { authConfig } from '@/auth.config';
 
-export const {
-  handlers,
-  signIn,
-  signOut,
-  auth
-} = NextAuth({
-  ...authConfig,
+export const authOptions: NextAuthOptions = {
   providers: [
-    Credentials({
+    CredentialsProvider({
       name: "credentials",
       credentials: {
         email: { 
@@ -70,4 +63,34 @@ export const {
       },
     }),
   ],
-});
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role;
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+      }
+      return session;
+    },
+  },
+  pages: {
+    signIn: "/login",
+  },
+  session: {
+    strategy: "jwt",
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+};
+
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };
+
+// Helper function for getting session in API routes
+export const auth = () => getServerSession(authOptions);

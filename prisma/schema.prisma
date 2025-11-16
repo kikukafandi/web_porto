@@ -17,6 +17,7 @@ model User {
   name      String?
   role      UserRole @default(ADMIN)
   createdAt DateTime @default(now())
+  carts     Cart[]
 }
 
 enum UserRole {
@@ -56,6 +57,7 @@ model Product {
   isActive     Boolean       @default(true)
   createdAt    DateTime      @default(now())
   transactions Transaction[]
+  cartItems    CartItem[]
 }
 
 model Transaction {
@@ -82,4 +84,46 @@ model CallbackLog {
   id        String   @id @default(uuid())
   payload   Json
   createdAt DateTime @default(now())
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  sessionId String?    // for guest users
+  userId    String?    // for logged users
+  user      User?      @relation(fields: [userId], references: [id])
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String  @id @default(uuid())
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(1)
+  createdAt DateTime @default(now())
+  
+  @@unique([cartId, productId])
+}
+
+model Experience {
+  id           String          @id @default(uuid())
+  company      String
+  position     String
+  duration     String
+  description  String
+  technologies String[]
+  type         ExperienceType  @default(WORK)
+  order        Int             @default(0)
+  isActive     Boolean         @default(true)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+}
+
+enum ExperienceType {
+  WORK
+  EDUCATION
+  PROJECT
 }

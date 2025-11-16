@@ -14,7 +14,7 @@ export default async function ProductsPage() {
   });
 
   return (
-    <div className="min-h-screen py-20 px-4">
+    <div className="min-h-screen pt-28 pb-20 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="mb-12">
           <Link href="/" className="text-purple-400 hover:text-purple-300 transition-colors mb-4 inline-block">
@@ -31,7 +31,13 @@ export default async function ProductsPage() {
         {products.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product: any) => (
-              <ProductCard key={product.id} {...product} />
+              <ProductCard 
+                key={product.id} 
+                {...product} 
+                onAddToCart={() => {
+                  // This will be handled by the ProductCard component
+                }}
+              />
             ))}
           </div>
         ) : (
