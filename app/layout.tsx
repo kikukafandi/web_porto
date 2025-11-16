@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { Header } from "@/components/Header";
+import { Providers } from "@/components/Providers";
 
 export const metadata: Metadata = {
   title: "Tirta \"Kikuk\" Afandi — Portfolio",
@@ -25,22 +26,24 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans text-gray-200 antialiased">
-        <div className="min-h-screen flex flex-col">
-          {/* NAVBAR */}
-          <Header/>
+        <Providers>
+          <div className="min-h-screen flex flex-col">
+            {/* NAVBAR */}
+            <Header/>
 
-          {/* MAIN CONTENT */}
-          <main className="flex-1">
-            {children}
-          </main>
+            {/* MAIN CONTENT */}
+            <main className="flex-1">
+              {children}
+            </main>
 
-          {/* FOOTER */}
-          <footer className="py-6 text-center text-sm opacity-60">
-            <div className="max-w-6xl mx-auto px-6">
-              © {new Date().getFullYear()} Tirta "Kikuk" Afandi — Built with Clear Flow Programming Style
-            </div>
-          </footer>
-        </div>
+            {/* FOOTER */}
+            <footer className="py-6 text-center text-sm opacity-60">
+              <div className="max-w-6xl mx-auto px-6">
+                © {new Date().getFullYear()} Tirta "Kikuk" Afandi — Built with Clear Flow Programming Style
+              </div>
+            </footer>
+          </div>
+        </Providers>
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 import type { NextAuthConfig } from "next-auth";
 
-export const authConfig = {
+export const authConfig: NextAuthConfig = {
   providers: [],
 
   callbacks: {
@@ -14,8 +14,8 @@ export const authConfig = {
 
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
       }
       return session;
     },
@@ -30,4 +30,4 @@ export const authConfig = {
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-} satisfies NextAuthConfig;
+};

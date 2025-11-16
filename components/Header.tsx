@@ -21,12 +21,12 @@ export function Header() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // (3) GANTI DENGAN BACKGROUND HITAM SAAT DI-SCROLL
   const navClasses = `
     max-w-6xl mx-auto flex items-center justify-between py-3 px-6
     transition-all duration-300 ease-in-out 
     ${isScrolled
-      ? 'bg-black/80 backdrop-blur-lg rounded-2xl border border-white/10' // Style baru saat di-scroll
+    //   ? 'bg-black/80 backdrop-blur-lg rounded-2xl border border-white/10'
+    ?'rounded-none border border-transparent'
       : 'rounded-none border border-transparent' // Style saat di atas
     }
   `;
